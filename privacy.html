@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080b10">
+  <title>Privacy — Genpass</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="./" aria-label="Genpass home"><span class="brand-mark">G</span><span>genpass</span></a>
+  </header>
+  <main class="container">
+    <section class="hero">
+      <div><span class="privacy-pill">Privacy</span><h1>Your passwords stay <span>on your device.</span></h1><p>Genpass is designed as a local-first static website.</p></div>
+    </section>
+    <section class="privacy-page-grid">
+      <article class="controls-card privacy-content">
+        <div><span class="section-kicker">01 · HOW IT WORKS</span><h2>Local generation</h2><p>Passwords, passphrases and PINs are generated inside your browser using the Web Crypto API. Genpass does not require an account or a password-generation backend.</p></div>
+        <div><span class="section-kicker">02 · STORAGE</span><h2>What Genpass stores</h2><p>Your selected theme is stored in your browser's local storage. The currently displayed generated password may be kept in session storage so a normal page refresh does not replace it. Generated passwords are not intentionally stored persistently by Genpass.</p></div>
+        <div><span class="section-kicker">03 · ANALYZER</span><h2>Analyzer privacy</h2><p>The analyzer calculates estimates directly in your browser. Passwords entered into the analyzer are not submitted by Genpass to an external password-checking service.</p></div>
+        <div><span class="section-kicker">04 · IMPORTANT</span><h2>Use it as a utility</h2><p>Genpass is a client-side utility, not a password manager. Use unique passwords for important accounts and follow the security requirements of the service you're signing into.</p></div>
+        <a href="./">← Back to Genpass</a>
+      </article>
+    </section>
+  </main>
+  <footer class="footer"><span>genpass v2.3.0</span><span>•</span><a href="./">Generator</a></footer>
+</body>
+</html>
