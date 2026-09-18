@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080b10">
+  <title>404 — Genpass</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header"><a class="brand" href="./" aria-label="Genpass home"><span class="brand-mark">G</span><span>genpass</span></a></header>
+  <main class="container">
+    <section class="hero error-page"><div><span class="privacy-pill">404</span><h1>That page <span>doesn't exist.</span></h1><p>The Genpass page you're looking for could not be found.</p><a class="primary error-home" href="./">Return to Genpass</a></div></section>
+  </main>
+  <footer class="footer"><span>genpass v2.3.0</span><span>•</span><a href="./privacy.html">Privacy</a></footer>
+</body>
+</html>
+  
