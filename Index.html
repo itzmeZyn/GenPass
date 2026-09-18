@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080b10">
+  <meta name="description" content="Genpass — strong passwords, passphrases and PINs generated locally in your browser.">
+  <title>Genpass — Secure Password Generator</title>
+
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="stylesheet" href="style.css">
+
+  <script>
+    (() => {
+      try {
+        if (localStorage.getItem("genpass-theme") === "light") {
+          document.documentElement.setAttribute("data-theme", "light");
+        }
+      } catch {}
+    })();
+  </script>
+</head>
+
+<body>
+  <header class="site-header">
+    <a class="brand" href="./" aria-label="Genpass home">
+      <span class="brand-mark">G</span>
+      <span>genpass</span>
+    </a>
+
+    <div class="header-actions">
+      <button
+        id="installBtn"
+        class="ghost hidden"
+        type="button"
+        hidden
+      >
+        Install
+      </button>
+
+      <button
+        id="themeBtn"
+        class="icon-btn"
+        type="button"
+        aria-label="Switch to light mode"
+        aria-pressed="false"
+        title="Switch to light mode"
+      >
+        ☾
+      </button>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- 01 GENERATOR -->
+    <section class="workspace" aria-labelledby="generator-title">
+      <div class="section-bar">
+        <div>
+          <span class="section-kicker">01 · GENERATOR</span>
+          <h2 id="generator-title">Create a secure password</h2>
+        </div>
+
+        <span class="section-status">Ready</span>
+      </div>
+
+      <div class="generator-grid">
+
+        <article class="output-card featured-card">
+          <div class="output-top">
+            <div>
+              <span class="eyebrow">YOUR PASSWORD</span>
+              <p class="muted">Generated on this device</p>
+            </div>
+
+            <button id="copyPassword" class="copy-btn" type="button">
+              Copy
+            </button>
+          </div>
+
+          <div
+            id="passwordOutput"
+            class="password-output"
+            aria-live="polite"
+          >
+            Generating…
+          </div>
+
+          <div class="strength-row">
+            <div class="strength-label">
+              <span>Strength</span>
+              <strong id="strengthText">—</strong>
+            </div>
+
+            <div class="meter">
+              <span id="strengthBar"></span>
+            </div>
+
+            <span id="entropyText" class="entropy">— bits</span>
+          </div>
+
+          <div class="history-block">
+            <div class="history-head">
+              <span class="eyebrow">HISTORY · THIS SESSION</span>
+              <button id="clearPasswordHistory" type="button">
+                Clear
+              </button>
+            </div>
+
+            <ul id="passwordHistory" class="history-list"></ul>
+          </div>
+        </article>
+
+        <aside class="controls-card generator-controls">
+          <div class="card-heading">
+            <div>
+              <span class="eyebrow">CONFIGURE</span>
+              <h3>Password settings</h3>
+            </div>
+
+            <span class="setting-badge">8–128</span>
+          </div>
+
+          <div class="control-block">
+            <div class="control-heading">
+              <label for="length">Length</label>
+              <output id="lengthValue" for="length">24</output>
+            </div>
+
+            <input
+              id="length"
+              type="range"
+              min="8"
+              max="128"
+              value="24"
+            >
+
+            <div class="range-labels">
+              <span>8</span>
+              <span>128</span>
+            </div>
+          </div>
+
+          <div class="options-grid">
+            <label class="check">
+              <input id="uppercase" type="checkbox" checked>
+              <span>Uppercase</span>
+              <code>A–Z</code>
+            </label>
+
+            <label class="check">
+              <input id="lowercase" type="checkbox" checked>
+              <span>Lowercase</span>
+              <code>a–z</code>
+            </label>
+
+            <label class="check">
+              <input id="numbers" type="checkbox" checked>
+              <span>Numbers</span>
+              <code>2–9</code>
+            </label>
+
+            <label class="check">
+              <input id="symbols" type="checkbox" checked>
+              <span>Symbols</span>
+              <code>!@#</code>
+            </label>
+
+            <label class="check wide">
+              <input id="ambiguous" type="checkbox" checked>
+              <span>Avoid ambiguous characters</span>
+              <code>Il1O0</code>
+            </label>
+          </div>
+
+          <div class="preset-block">
+            <span class="eyebrow">QUICK PRESETS</span>
+
+            <div class="preset-row">
+              <button class="preset" data-preset="strong" type="button">
+                Strong
+              </button>
+
+              <button class="preset" data-preset="maximum" type="button">
+                Maximum
+              </button>
+
+              <button class="preset" data-preset="easy" type="button">
+                Easy to type
+              </button>
+
+              <button class="preset" data-preset="alphanumeric" type="button">
+                Alphanumeric
+              </button>
+
+              <button class="preset" data-preset="ultra" type="button">
+                Ultra (64)
+              </button>
+            </div>
+          </div>
+
+          <button id="generateBtn" class="primary" type="button">
+            Generate password
+            <span class="shortcut">
+              <kbd>Ctrl</kbd><kbd>Enter</kbd>
+            </span>
+          </button>
+
+          <div id="generatorError" class="error" role="alert"></div>
+        </aside>
+
+      </div>
+    </section>
+
+    <!-- 02 BATCH -->
+    <section class="tool-section" aria-labelledby="batch-title">
+      <div class="section-bar">
+        <div>
+          <span class="section-kicker">02 · BATCH</span>
+          <h2 id="batch-title">Generate multiple passwords</h2>
+        </div>
+
+        <p>Generate a small batch locally and copy any result.</p>
+      </div>
+
+      <div class="batch-card">
+        <div class="batch-intro">
+          <strong>How many?</strong>
+          <span>Uses your current password settings.</span>
+        </div>
+
+        <div class="batch-actions">
+          <button class="secondary batch" data-count="5" type="button">
+            5 passwords
+          </button>
+
+          <button class="secondary batch" data-count="10" type="button">
+            10 passwords
+          </button>
+
+          <button class="secondary batch" data-count="20" type="button">
+            20 passwords
+          </button>
+        </div>
+
+        <div id="batchOutput" class="batch-output" hidden></div>
+      </div>
+    </section>
+
+    <!-- 03 PASSPHRASE -->
+    <section class="tool-section" aria-labelledby="passphrase-title">
+      <div class="section-bar">
+        <div>
+          <span class="section-kicker">03 · PASSPHRASE</span>
+          <h2 id="passphrase-title">Create a memorable passphrase</h2>
+        </div>
+
+        <p>Built-in words with browser cryptographic randomness.</p>
+      </div>
+
+      <div class="tool-grid">
+
+        <div class="controls-card tool-output-card">
+          <span class="eyebrow">YOUR PASSPHRASE</span>
+
+          <div
+            id="phraseOutput"
+            class="phrase-output"
+            aria-live="polite"
+          >
+            —
+          </div>
+
+          <div class="tool-output-actions">
+            <button id="copyPhrase" class="secondary" type="button">
+              Copy passphrase
+            </button>
+
+            <button
+              id="generatePhraseBtn"
+              class="primary compact"
+              type="button"
+            >
+              Generate
+            </button>
+          </div>
+
+          <div class="history-block">
+            <div class="history-head">
+              <span class="eyebrow">HISTORY · THIS SESSION</span>
+              <button id="clearPhraseHistory" type="button">
+                Clear
+              </button>
+            </div>
+
+            <ul id="phraseHistory" class="history-list"></ul>
+          </div>
+        </div>
+
+        <div class="controls-card tool-settings">
+          <div class="control-heading">
+            <label for="wordCount">Words</label>
+            <output id="wordCountValue">5</output>
+          </div>
+
+          <input
+            id="wordCount"
+            type="range"
+            min="3"
+            max="10"
+            value="5"
+          >
+
+          <div class="range-labels">
+            <span>3</span>
+            <span>10</span>
+          </div>
+
+          <div class="preset-row phrase-preset-row">
+            <button class="preset phrase-preset" data-words="3" type="button">
+              Short
+            </button>
+
+            <button class="preset phrase-preset" data-words="5" type="button">
+              Standard
+            </button>
+
+            <button class="preset phrase-preset" data-words="8" type="button">
+              Long
+            </button>
+          </div>
+
+          <label class="check">
+            <input id="capitalizeWords" type="checkbox" checked>
+            <span>Capitalize words</span>
+          </label>
+
+          <div class="control-block">
+            <div class="control-heading">
+              <label for="separator">Separator</label>
+            </div>
+
+            <select id="separator" class="select-input">
+              <option value="-" selected>Dash (-)</option>
+              <option value=" ">Space</option>
+              <option value="_">Underscore (_)</option>
+              <option value=".">Period (.)</option>
+              <option value="">None</option>
+            </select>
+          </div>
+
+          <label class="check wide">
+            <input id="useCustomWords" type="checkbox">
+            <span>Use custom word list</span>
+          </label>
+
+          <div id="customWordsBlock" class="custom-words-block hidden">
+            <textarea
+              id="customWordsInput"
+              class="custom-words-input"
+              rows="3"
+              placeholder="Comma or newline separated words (min 4)"
+            ></textarea>
+
+            <div id="customWordsError" class="error"></div>
+          </div>
+        </div>
+
+      </div>
+
+      <p class="note">
+        For services with strict password rules, use the password generator instead.
+      </p>
+    </section>
+
+    <!-- 04 ANALYZER -->
+    <section class="tool-section" aria-labelledby="analyzer-title">
+      <div class="section-bar">
+        <div>
+          <span class="section-kicker">04 · ANALYZER</span>
+          <h2 id="analyzer-title">Check password strength</h2>
+        </div>
+
+        <p>Analysis happens entirely on this device.</p>
+      </div>
+
+      <div class="controls-card analyzer-card">
+        <div class="input-row">
+          <label class="sr-only" for="analyzeInput">
+            Password to analyze
+          </label>
+
+          <input
+            id="analyzeInput"
+            class="text-input"
+            type="text"
+            autocomplete="off"
+            spellcheck="false"
+            placeholder="Enter a password to analyze"
+          >
+
+          <button id="analyzeGenerate" class="secondary" type="button">
+            Generate example
+          </button>
+        </div>
+
+        <div id="analysisResult" class="analysis" hidden>
+          <div class="analysis-score">
+            <div>
+              <span class="eyebrow">ASSESSMENT</span>
+              <strong id="analysisStrength">—</strong>
+            </div>
+
+            <span id="analysisEntropy">— bits</span>
+          </div>
+
+          <div class="meter large">
+            <span id="analysisBar"></span>
+          </div>
+
+          <ul id="analysisTips"></ul>
+
+          <div class="analysis-stats" id="analysisStats"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 PIN -->
+    <section class="tool-section" aria-labelledby="pin-title">
+      <div class="section-bar">
+        <div>
+          <span class="section-kicker">05 · PIN</span>
+          <h2 id="pin-title">Generate a secure PIN</h2>
+        </div>
+
+        <p>Random digits with optional sequence avoidance.</p>
+      </div>
+
+      <div class="tool-grid pin-grid">
+
+        <div class="controls-card tool-output-card">
+          <span class="eyebrow">YOUR PIN</span>
+
+          <div id="pinOutput" class="pin-output" aria-live="polite">
+            —
+          </div>
+
+          <button id="copyPin" class="secondary full" type="button">
+            Copy PIN
+          </button>
+
+          <div class="history-block">
+            <div class="history-head">
+              <span class="eyebrow">HISTORY · THIS SESSION</span>
+              <button id="clearPinHistory" type="button">
+                Clear
+              </button>
+            </div>
+
+            <ul id="pinHistory" class="history-list"></ul>
+          </div>
+        </div>
+
+        <div class="controls-card tool-settings">
+          <div class="control-heading">
+            <label for="pinLength">PIN length</label>
+            <output id="pinLengthValue">6</output>
+          </div>
+
+          <input
+            id="pinLength"
+            type="range"
+            min="4"
+            max="20"
+            value="6"
+          >
+
+          <div class="range-labels">
+            <span>4</span>
+            <span>20</span>
+          </div>
+
+          <div class="preset-row pin-preset-row">
+            <button class="preset pin-preset" data-pinlen="4" type="button">
+              4-digit
+            </button>
+
+            <button class="preset pin-preset" data-pinlen="6" type="button">
+              6-digit
+            </button>
+
+            <button class="preset pin-preset" data-pinlen="8" type="button">
+              8-digit
+            </button>
+          </div>
+
+          <label class="check">
+            <input id="noSequential" type="checkbox" checked>
+            <span>Avoid obvious sequences</span>
+          </label>
+
+          <button id="generatePinBtn" class="primary compact" type="button">
+            Generate PIN
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- PRIVACY -->
+    <section class="privacy-card">
+      <div class="privacy-icon">✓</div>
+
+      <div>
+        <span class="eyebrow">PRIVACY BY DESIGN</span>
+
+        <h2>Your passwords stay on your device.</h2>
+
+        <p>
+          Genpass uses the browser's Web Crypto API for randomness.
+          Passwords and passphrases are generated and analyzed locally.
+        </p>
+
+        <a href="privacy.html">Read the privacy details →</a>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <span>genpass v2.3.0</span>
+    <span>•</span>
+    <a href="privacy.html">Privacy</a>
+    <span>•</span>
+    <a href="README.md">About</a>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+  </html>
+  
